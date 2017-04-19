@@ -9,8 +9,8 @@ var accountName = "banditsoftware";
 
 // Eric Small Test Board
 var boardId = 1190850304;
-var laneTitle = "RFA.1"
-var increment = 3;
+var laneTitle = "RFA.2"
+var increment = 2;
 
 if (process.argv.length <= 2) {
     console.log("Usage: node lk-stalenessier.js [email] [password]");
@@ -73,12 +73,12 @@ client.getBoard( boardId, function( err, board ) {
         
         client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
         	if (err) console.error ("Error updating card:", card.Id, err);
-        	else console.log(card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
+        	//else console.log(card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
         } );
 
         client.addComment( boardId, card.Id, user.Id, "Size updated for staleness to " + (card.Size + increment), function (err, res) {
         	if (err) console.error ("Error commenting on card:", card.Id, err);
-        	else console.log(card.Id, card.Title, "Commend Added");
+        	//else console.log(card.Id, card.Title, "Comment Added");
         } );
     } 
 } );
