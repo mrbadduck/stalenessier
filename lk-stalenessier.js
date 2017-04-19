@@ -27,7 +27,7 @@ var password = process.argv[3];
 var client = new LeanKitClient( accountName, email, password );
 
 client.getBoard( boardId, function( err, board ) {  
-    if ( err ) console.error( "Error getting board:", err );
+    if ( err ) console.error( "Error getting board:", boardId, err );
 
     // Get the active lanes from the board
     var lanes = board.Lanes;
@@ -43,7 +43,26 @@ client.getBoard( boardId, function( err, board ) {
     }
 
     // If you didn't find the lane, abort!
-    if ( targetLane == null ) console.error( "Could not find lane:", laneTitle);
+    if ( targetLane == null ) {
+    	console.error( "Could not find lane:", laneTitle);
+    	exit(1);
+    }
+
+    // Loop through the board users to find the user who made this request
+    var user = null;
+    for (var i = 0; i < board.BoardUsers.length; i++) {
+    	//console.log(board.BoardUsers[i].EmailAddress);
+    	if ( board.BoardUsers[i].EmailAddress == email ) {
+    		user = board.BoardUsers[i];
+    		break;
+    	}
+    }
+    
+    // If you didn't find the user, abort!
+    if ( user == null ) {
+    	console.error( "Could not find the user on the board:", email);
+    	exit(1);
+    }
 
     // Get all the cards in the target lane
     var cards = targetLane.Cards;
@@ -53,8 +72,13 @@ client.getBoard( boardId, function( err, board ) {
         var card = cards[ i ];
         
         client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
-        	if (err) console.error ("Error updating card:", card.Id);
+        	if (err) console.error ("Error updating card:", card.Id, err);
         	else console.log(card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
+        } );
+
+        client.addComment( boardId, card.Id, user.Id, "Size updated for staleness to " + (card.Size + increment), function (err, res) {
+        	if (err) console.error ("Error commenting on card:", card.Id, err);
+        	else console.log(card.Id, card.Title, "Commend Added");
         } );
     } 
 } );
