@@ -15,7 +15,11 @@ var increment = 2;
 
 var usage = "Usage: node lk-stalenessier.js [board ID] [lane title] [increment #]";
 
-if (process.argv.length > 1) {
+if (process.argv.length == 2) {
+	console.log("Using default test values, updating Eric Small Test Board, lane RFA.2, increment 2.")
+}
+
+if (process.argv.length > 2) {
 	if (process.argv[2] == 'help') {
 		console.log(usage);
 		process.exit(0);
