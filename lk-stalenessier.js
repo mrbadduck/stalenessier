@@ -13,16 +13,27 @@ var boardId = 1190850304;
 var laneTitle = "RFA.2"
 var increment = 2;
 
-if (process.argv.length <= 2) {
-    console.log("Usage: node lk-stalenessier.js [board ID] [lane title] [increment #]");
-    process.exit(-1);
+var usage = "Usage: node lk-stalenessier.js [board ID] [lane title] [increment #]";
+
+if (process.argv.length > 1) {
+	if (process.argv[2] == 'help') {
+		console.log(usage);
+		process.exit(0);
+	}
+
+	if (process.argv.length < 5) {
+	    console.log(usage);
+	    process.exit(-1);
+	}
+
+	boardId = process.argv[2];
+	laneTitle = process.argv[3];
+	increment = process.argv[4];
 }
 
 read({ prompt: 'Login E-mail: '}, function(er, email) {
 read({ prompt: 'Password (silent): ', silent: true }, function(er, password) {
   
-	
-
 	// Create an instance of the client with your credentials
 	var client = new LeanKitClient( accountName, email, password );
 
