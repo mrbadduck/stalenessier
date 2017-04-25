@@ -64,7 +64,10 @@ client.getBoard( boardId, function( err, board ) {
     	exit(1);
     }
 
-    function stalenessifyCards( cards, i ) {
+    // Get all the cards in the target lane
+    var cards = targetLane.Cards;
+
+    function stalenessifyCards( i ) {
 	    // Loop through the cards and increment their size by the increment amount
 	    var card = cards[ i ];
 	    
@@ -72,19 +75,18 @@ client.getBoard( boardId, function( err, board ) {
 	        
 	    client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
 	        if (err) console.error ("Error updating card:", card.Id, err);
-	        //else console.log(card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
+	        else console.log(i + 1, "/", cards.length, card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
 
 	        client.addComment( boardId, card.Id, user.Id, "Size updated for staleness to " + (card.Size + increment), function (err, res) {
 	            if (err) console.error ("Error commenting on card:", card.Id, err);
-	            //else console.log(card.Id, card.Title, "Comment Added");
 	        } );
-	    } );
 	    
-	    stalenessifyCards( cards, i + 1 );
+			stalenessifyCards( i + 1 );
+	    } );
 	} 
 
     // Get all the cards in the target lane
-    stalenessifyCards( targetLane.Cards, 0 );
+    stalenessifyCards( 0 );
 } );
 
 
