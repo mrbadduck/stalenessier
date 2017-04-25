@@ -26,6 +26,25 @@ var password = process.argv[3];
 // Create an instance of the client with your credentials
 var client = new LeanKitClient( accountName, email, password );
 
+function stalenessifyCards( cards, i ) {
+    // Loop through the cards and increment their size by the increment amount
+    var card = cards[ i ];
+    
+    if ( !card ) return;
+        
+    client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
+        if (err) console.error ("Error updating card:", card.Id, err);
+        //else console.log(card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
+
+        client.addComment( boardId, card.Id, user.Id, "Size updated for staleness to " + (card.Size + increment), function (err, res) {
+            if (err) console.error ("Error commenting on card:", card.Id, err);
+            //else console.log(card.Id, card.Title, "Comment Added");
+        } );
+    } );
+    
+    stalenessifyCards( cards, i + 1 );
+} 
+
 client.getBoard( boardId, function( err, board ) {  
     if ( err ) console.error( "Error getting board:", boardId, err );
 
@@ -65,22 +84,7 @@ client.getBoard( boardId, function( err, board ) {
     }
 
     // Get all the cards in the target lane
-    var cards = targetLane.Cards;
-
-    // Loop through the cards and increment their size by the increment amount
-    for (var i = 0; i < cards.length; i++) {
-        var card = cards[ i ];
-        
-        client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
-        	if (err) console.error ("Error updating card:", card.Id, err);
-        	//else console.log(card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
-        } );
-
-        client.addComment( boardId, card.Id, user.Id, "Size updated for staleness to " + (card.Size + increment), function (err, res) {
-        	if (err) console.error ("Error commenting on card:", card.Id, err);
-        	//else console.log(card.Id, card.Title, "Comment Added");
-        } );
-    } 
+    stalenessifyCards( targetLane.Cards, 0 );
 } );
 
 
