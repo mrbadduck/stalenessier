@@ -90,7 +90,7 @@ read({ prompt: 'Password (silent): ', silent: true }, function(er, password) {
 		        
 		    client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
 		        if (err) console.error ("Error updating card:", card.Id, err);
-		        else console.log(i + 1, '/', cards.length, card.Id, card.Title, "Size Updated", card.Size, card.Size + increment);
+		        else console.log((i + 1) + '/' + cards.length, card.Id, '"' + card.Title + '"', "Size Updated", card.Size, card.Size + increment);
 
 		        client.addComment( boardId, card.Id, user.Id, "Size updated for staleness to " + (card.Size + increment), function (err, res) {
 		            if (err) console.error ("Error commenting on card:", card.Id, err);
