@@ -17,7 +17,7 @@ var increment = 2;
 var usage = "Usage: node lk-stalenessier.js [board ID] [lane title] [increment #]";
 
 if (process.argv.length == 2) {
-	console.log("Using default test values, updating Eric Small Test Board, lane RFA.2, increment 2.")
+	console.log(usage);
 }
 
 if (process.argv.length > 2) {
@@ -37,7 +37,7 @@ if (process.argv.length > 2) {
 
 	if (!increment) {
 		console.error( "Invalid increment value.");
-		return;
+		process.exit(-1);
 	}
 
 	read({ prompt: 'Login E-mail: '}, function(er, email) {
@@ -49,7 +49,7 @@ if (process.argv.length > 2) {
 		client.getBoard( boardId, function( err, board ) {  
 		    if ( err ) {
 		    	console.error( "Error getting board: %s. Double check the board ID and login credentials.", boardId);
-		    	return;
+		    	process.exit(-1);
 		    }
 
 		    // Get the active lanes from the board
@@ -68,7 +68,7 @@ if (process.argv.length > 2) {
 		    // If you didn't find the lane, abort!
 		    if ( targetLane == null ) {
 		    	console.error( "Could not find lane:", laneTitle);
-		    	return;
+		    	process.exit(-1);
 		    }
 
 		    // Loop through the board users to find the user who made this request
@@ -84,7 +84,7 @@ if (process.argv.length > 2) {
 		    // If you didn't find the user, abort!
 		    if ( user == null ) {
 		    	console.error( "Could not find the user on the board:", email);
-		    	return;
+		    	process.exit(-1);
 		    }
 
 		    // Get all the cards in the target lane
@@ -94,7 +94,7 @@ if (process.argv.length > 2) {
 			    // Loop through the cards and increment their size by the increment amount
 			    var card = cards[ i ];
 			    
-			    if ( !card ) return;
+			    if ( !card ) process.exit(-1);
 			        
 			    client.updateCardFields( {CardId: card.Id, Size: (card.Size + increment)}, function (err, res) {
 			        if (err) console.error ("Error updating card:", card.Id, err);
